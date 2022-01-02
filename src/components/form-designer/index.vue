@@ -11,25 +11,25 @@
 <template>
   <el-container class="main-container full-height">
 <!--    去除头部 -->
-    <el-header class="main-header">
-      <div class="float-left main-title">
-        <img src="../../assets/vform-logo.png" @click="openHome">
-        <span class="bold">VForm</span> {{i18nt('application.productTitle')}} <span class="version-span">Ver {{vFormVersion}}</span></div>
-      <div class="float-right external-link">
-        <el-dropdown v-if="showLink('languageMenu')" @command="handleLanguageChanged">
-          <span class="el-dropdown-link">{{curLangName}}<i class="el-icon-arrow-down el-icon--right"></i></span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="zh-CN">{{i18nt('application.zh-CN')}}</el-dropdown-item>
-            <el-dropdown-item command="en-US">{{i18nt('application.en-US')}}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, gitUrl)" target="_blank"><svg-icon icon-class="github" />{{i18nt('application.github')}}</a>
-        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, docUrl)" target="_blank"><svg-icon icon-class="document" />{{i18nt('application.document')}}</a>
-        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, chatUrl)" target="_blank">{{i18nt('application.qqGroup')}}</a>
-        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, subScribeUrl)" target="_blank">
-          {{i18nt('application.subscription')}}<i class="el-icon-top-right"></i></a>
-      </div>
-    </el-header>
+<!--    <el-header class="main-header">-->
+<!--      <div class="float-left main-title">-->
+<!--        <img src="../../assets/vform-logo.png" @click="openHome">-->
+<!--        <span class="bold">VForm</span> {{i18nt('application.productTitle')}} <span class="version-span">Ver {{vFormVersion}}</span></div>-->
+<!--      <div class="float-right external-link">-->
+<!--        <el-dropdown v-if="showLink('languageMenu')" @command="handleLanguageChanged">-->
+<!--          <span class="el-dropdown-link">{{curLangName}}<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i></span>-->
+<!--          <el-dropdown-menu slot="dropdown">-->
+<!--            <el-dropdown-item command="zh-CN">{{i18nt('application.zh-CN')}}</el-dropdown-item>-->
+<!--            <el-dropdown-item command="en-US">{{i18nt('application.en-US')}}</el-dropdown-item>-->
+<!--          </el-dropdown-menu>-->
+<!--        </el-dropdown>-->
+<!--        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, gitUrl)" target="_blank"><svg-icon icon-class="github" />{{i18nt('application.github')}}</a>-->
+<!--        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, docUrl)" target="_blank"><svg-icon icon-class="document" />{{i18nt('application.document')}}</a>-->
+<!--        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, chatUrl)" target="_blank">{{i18nt('application.qqGroup')}}</a>-->
+<!--        <a v-if="showLink('externalLink')" href="javascript:void(0)" @click="(ev) => openUrl(ev, subScribeUrl)" target="_blank">-->
+<!--          {{i18nt('application.subscription')}}<i class="el-icon-top-right"></i></a>-->
+<!--      </div>-->
+<!--    </el-header>-->
 
     <el-container>
       <el-aside class="side-panel">
