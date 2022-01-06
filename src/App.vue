@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <VFormDesigner ref="vfDesignerRef"></VFormDesigner>
+<!--    <VFormDesigner ref="vfDesignerRef"></VFormDesigner>-->
+<!--    <form-manager ></form-manager>-->
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import VFormDesigner from './components/form-designer/index.vue'
+// import router from "@/router";
 
 export default {
   name: 'App',
-  components: {
-    VFormDesigner,
-  }
 }
 </script>
 

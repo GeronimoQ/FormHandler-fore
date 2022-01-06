@@ -3,6 +3,7 @@ import './utils/debug-console'
 import Vue from 'vue'
 import axios from "axios";
 import App from './App.vue'
+import router from "@/router";
 import ElementUI from 'element-ui'
 import './utils/directive'
 import './icons'
@@ -25,5 +26,9 @@ Vue.config.productionTip = false
 
 new Vue({
   el: "#app",
+  router,
+  comments:{
+    App
+  },
   render: h => h(App),
 })

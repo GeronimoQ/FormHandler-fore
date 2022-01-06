@@ -7,7 +7,7 @@
  * remark: 如果要分发VForm源码，需在本文件顶部保留此文件头信息！！
  */
 -->
-
+<!--表格渲染组件-->
 <template>
   <el-form :label-position="labelPosition" :size="size" :class="[customClass]" class="render-form"
            :label-width="labelWidth" :validate-on-rule-change="false"
