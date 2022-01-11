@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import formList from "@/components/form-list/form-list";
 
 Vue.use(Router)
 
@@ -31,6 +32,13 @@ const router = new Router({
                         title: "模板组件"
                     },
                     component: formCreator
+                },
+                {
+                    path: "/form/list",
+                    meta: {
+                        title: "模板列表"
+                    },
+                    component: formList
                 },
             ]
         },

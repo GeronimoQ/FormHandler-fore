@@ -18,8 +18,18 @@ loadExtension()
 
 Vue.use(ElementUI, { size: 'small' })
 
+//原型链的更改
+import {Message} from "element-ui"
+import {Notification} from "element-ui"
+Vue.prototype.$message=Message
+Vue.prototype.$notify=Notification
+
+
+
+
 if (typeof window !== 'undefined') {
   window.axios = axios
+
 }
 
 Vue.config.productionTip = false

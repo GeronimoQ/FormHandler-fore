@@ -57,14 +57,14 @@
         <slot :name="slotName"></slot>
       </template>
     </div>
-<!--预览对话框，将其替换为模板，便于后端拿出复用。-->
+    <!--预览对话框，将其替换为模板，便于后端拿出复用。-->
     <el-dialog :title="i18nt('designer.toolbar.preview')" :visible.sync="showPreviewDialogFlag"
                v-if="showPreviewDialogFlag"
                :show-close="true" :close-on-click-modal="false" :close-on-press-escape="false" center v-dialog-drag
                :destroy-on-close="true" class="small-padding-dialog" width="75%" :fullscreen="layoutType === 'H5'">
       <div>
         <div class="form-render-wrapper" :class="[layoutType === 'H5' ? 'h5-layout' : '']">
-<!--         表格渲染组件 -->
+          <!--         表格渲染组件 -->
           <VFormRender ref="preForm" :form-json="formJson" :form-data="testFormData" :preview-state="true"
                        :option-data="testOptionData"
                        @appendButtonClick="testOnAppendButtonClick" @buttonClick="testOnButtonClick"
@@ -197,14 +197,16 @@ import {
   copyToClipboard,
   generateId,
   getQueryParam,
-  traverseAllWidgets
+  traverseAllWidgets, dataFormat
 } from "@/utils/util";
 import i18n from '@/utils/i18n'
 import {generateCode} from "@/utils/code-generator";
 import {genSFC} from "@/utils/sfc-generator";
 import loadBeautifier from "@/utils/beautifierLoader";
 import {saveAs} from 'file-saver'
-import axios from "axios"
+
+// api
+import {sendFormModel} from "@/apis/formAPI";
 
 export default {
   name: "ToolbarPanel",
@@ -480,12 +482,36 @@ export default {
 
     //导出JSON，我们将对代码发送到服务器端（sendToServer(api/form/add)）
     exportJson() {
+
+
       let widgetList = deepClone(this.designer.widgetList)//表单元素配置
       let formConfig = deepClone(this.designer.formConfig)//表单配置
 
       this.jsonContent = JSON.stringify({widgetList, formConfig}, null, '  ')
       this.jsonRawContent = JSON.stringify({widgetList, formConfig})
-      this.showExportJsonDialogFlag = true
+
+      //拒绝预览框的出现，直接上传数据，但建议添加提示对话框！
+      // this.showExportJsonDialogFlag = true
+      //  封装数据，发送请求
+      //
+      const formModel = {
+        createTime: dataFormat(new Date()),
+        formConfig: JSON.stringify(formConfig),
+        formInstr: "test",
+        id: "",
+        itemList: JSON.stringify(widgetList),
+        userId: "110"
+      }
+      //  测试数据
+      // console.log(JSON.stringify(formObj))
+      //  发送，此模块建议放入确认对话框
+      const response = sendFormModel(formModel)
+      response.then(res => {
+        this.$message({type: "success", message: res.message})
+      }).catch(err => {
+        //预留，对请求失败的数据进行处理
+        // this.$notify({title: "上传失败", type: "error", message: err.data.message})
+      })
     },
 
     copyFormJson(e) {

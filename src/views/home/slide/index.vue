@@ -24,6 +24,11 @@
             <span>表单设计</span>
           </template>
         </el-menu-item>
+        <el-menu-item index="/form/list">
+          <template #title>
+            <span>模板列表</span>
+          </template>
+        </el-menu-item>
 
 
       </el-submenu>
