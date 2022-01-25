@@ -16,10 +16,12 @@ import da from "element-ui/src/locale/lang/da";
 const service = axios.create({
     //api接口
     baseURL: "http://127.0.0.1:8088/jeecg-boot/geronimo",
+    // baseURL: "http://localhost:8910/",
     //请求超时的默认值
-    timeout: 20000
+    timeout: 20000,
 })
 
+service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 //环境切换
 // if (process.env.NODE_ENV == 'development') {
 //     axios.defaults.baseURL = 'http://127.0.0.1:8088/jeecg-boot/geronimo';

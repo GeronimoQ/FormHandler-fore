@@ -23,8 +23,13 @@ function post(config,req) {
     return   axios({
         url:config.url,
         method: config.method,
-        data:req
+        data:req,
     })
+}
+
+
+function formPost(config,req){
+    axios()
 }
 
 export {get, post}

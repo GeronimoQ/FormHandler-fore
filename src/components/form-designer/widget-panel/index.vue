@@ -81,7 +81,7 @@
               <!--              </el-popover>-->
               <div class="bottom clear-fix">
                 <span class="ft-title">#{{ idx + 1 }} {{ ft.modelJson.formConfig.modelName }}</span>
-                <el-button type="text" class="right-button" @click="loadFormTemplate(ft.modelJson)">
+                <el-button type="text" class="right-button" @click="loadFormTemplate(ft)">
                   {{ i18nt('designer.hint.loadFormTemplate') }}
                 </el-button>
               </div>
@@ -99,7 +99,7 @@
 import Draggable from 'vuedraggable'
 import {containers, basicFields, advancedFields, customFields} from "./widgetsConfig"
 import {formTemplates} from './templatesConfig'
-import {addWindowResizeHandler} from "@/utils/util"
+import {addWindowResizeHandler, deepClone} from "@/utils/util"
 import i18n from "@/utils/i18n"
 import axios from "axios"
 
@@ -111,7 +111,7 @@ import ftImg5 from '@/assets/ft-images/t5.png'
 import ftImg6 from '@/assets/ft-images/t6.png'
 import ftImg7 from '@/assets/ft-images/t7.png'
 import ftImg8 from '@/assets/ft-images/t8.png'
-import {getFormList} from "@/apis/formAPI";
+import {getFormList, queryModelList} from "@/apis/formAPI";
 
 export default {
   name: "FieldPanel",
@@ -169,223 +169,267 @@ export default {
     })
   },
   methods: {
-    //创建formTemplates请求方法
-    loadFormList() {
+
+    //生产模板对象
+    ModelObj(obj) {
+      let widgetList = deepClone(obj.itemList)//表单元素配置
+      let formConfig = deepClone(obj.formConfig)//表单配置
+
+      let jsonContent = JSON.stringify({widgetList, formConfig}, null, '  ')
+      let jsonRawContent = JSON.stringify({widgetList, formConfig})
+      return {
+        id: obj.id,
+        userid: obj.userId,
+        createTime: new DateTime(obj.createTime),
+        modelJson: jsonRawContent
+      }
+
+    },
+    //加载用户下的模板列表
+    loadFormList: function () {
+      //测试获取
+      // 测试用户名
+      let params = {userId: 110}
+      const response = queryModelList(params);
+      response.then(
+          //    数据处理并显示
+          res => {
+            // console.log(res.result)
+            let modelList = []
+
+            for (var obj in res.result
+                ) {
+              let model = res.result[obj]
+              let widgetList = JSON.parse(model.itemList)//表单元素配置
+              let formConfig =JSON.parse(model.formConfig)//表单配置
+
+
+
+
+              let jsonRawContent={widgetList,formConfig}
+              let o= {
+                id: model.id,
+                userid: model.userId,
+                createTime: new Date(model.createTime),
+                modelJson: jsonRawContent
+              }
+              modelList.push(o)
+            }
+            console.log(modelList)
+            this.formTemplates = modelList
+          }
+      ).catch(_ => {
+
+      })
+
       //  模拟数据
-      this.formTemplates = [
-        {
-          "id": "1232131",
-          "userId": "110",
-          "createTime": new Date(),
-          "modelJson": {
-            "widgetList": [
-              {
-                "type": "input",
-                "icon": "text-field",
-                "formItemFlag": true,
-                "options": {
-                  "name": "input24141",
-                  "label": "input",
-                  "labelAlign": "",
-                  "type": "text",
-                  "defaultValue": "",
-                  "placeholder": "",
-                  "columnWidth": "200px",
-                  "size": "",
-                  "labelWidth": null,
-                  "labelHidden": false,
-                  "readonly": false,
-                  "disabled": false,
-                  "hidden": false,
-                  "clearable": true,
-                  "showPassword": false,
-                  "required": false,
-                  "validation": "",
-                  "validationHint": "",
-                  "customClass": [],
-                  "labelIconClass": null,
-                  "labelIconPosition": "rear",
-                  "labelTooltip": null,
-                  "minLength": null,
-                  "maxLength": null,
-                  "showWordLimit": false,
-                  "prefixIcon": "",
-                  "suffixIcon": "",
-                  "appendButton": false,
-                  "appendButtonDisabled": false,
-                  "buttonIcon": "el-icon-search",
-                  "onCreated": "",
-                  "onMounted": "",
-                  "onInput": "",
-                  "onChange": "",
-                  "onFocus": "",
-                  "onBlur": "",
-                  "onValidate": ""
-                },
-                "id": "input24141"
-              }
-            ],
-            "formConfig": {
-              "modelName": "测试表单",
-              "refName": "vForm",
-              "rulesName": "rules",
-              "labelWidth": 80,
-              "labelPosition": "left",
-              "size": "",
-              "labelAlign": "label-left-align",
-              "cssCode": "",
-              "customClass": "",
-              "functions": "",
-              "layoutType": "PC",
-              "onFormCreated": "",
-              "onFormMounted": "",
-              "onFormDataChange": ""
-            }
-          }
-        },
-        {
-          "id": "1232132",
-          "userId": "110",
-          "createTime": new Date(),
-          "modelJson": {
-            "widgetList": [
-              {
-                "type": "input",
-                "icon": "text-field",
-                "formItemFlag": true,
-                "options": {
-                  "name": "input24141",
-                  "label": "input",
-                  "labelAlign": "",
-                  "type": "text",
-                  "defaultValue": "",
-                  "placeholder": "",
-                  "columnWidth": "200px",
-                  "size": "",
-                  "labelWidth": null,
-                  "labelHidden": false,
-                  "readonly": false,
-                  "disabled": false,
-                  "hidden": false,
-                  "clearable": true,
-                  "showPassword": false,
-                  "required": false,
-                  "validation": "",
-                  "validationHint": "",
-                  "customClass": [],
-                  "labelIconClass": null,
-                  "labelIconPosition": "rear",
-                  "labelTooltip": null,
-                  "minLength": null,
-                  "maxLength": null,
-                  "showWordLimit": false,
-                  "prefixIcon": "",
-                  "suffixIcon": "",
-                  "appendButton": false,
-                  "appendButtonDisabled": false,
-                  "buttonIcon": "el-icon-search",
-                  "onCreated": "",
-                  "onMounted": "",
-                  "onInput": "",
-                  "onChange": "",
-                  "onFocus": "",
-                  "onBlur": "",
-                  "onValidate": ""
-                },
-                "id": "input24141"
-              }
-            ],
-            "formConfig": {
-              "modelName": "测试表单",
-              "refName": "vForm",
-              "rulesName": "rules",
-              "labelWidth": 80,
-              "labelPosition": "left",
-              "size": "",
-              "labelAlign": "label-left-align",
-              "cssCode": "",
-              "customClass": "",
-              "functions": "",
-              "layoutType": "PC",
-              "onFormCreated": "",
-              "onFormMounted": "",
-              "onFormDataChange": ""
-            }
-          }
-        },
-        {
-          "id": "1232133",
-          "userId": "110",
-          "createTime": new Date(),
-          "modelJson": {
-            "widgetList": [
-              {
-                "type": "input",
-                "icon": "text-field",
-                "formItemFlag": true,
-                "options": {
-                  "name": "input24141",
-                  "label": "input",
-                  "labelAlign": "",
-                  "type": "text",
-                  "defaultValue": "",
-                  "placeholder": "",
-                  "columnWidth": "200px",
-                  "size": "",
-                  "labelWidth": null,
-                  "labelHidden": false,
-                  "readonly": false,
-                  "disabled": false,
-                  "hidden": false,
-                  "clearable": true,
-                  "showPassword": false,
-                  "required": false,
-                  "validation": "",
-                  "validationHint": "",
-                  "customClass": [],
-                  "labelIconClass": null,
-                  "labelIconPosition": "rear",
-                  "labelTooltip": null,
-                  "minLength": null,
-                  "maxLength": null,
-                  "showWordLimit": false,
-                  "prefixIcon": "",
-                  "suffixIcon": "",
-                  "appendButton": false,
-                  "appendButtonDisabled": false,
-                  "buttonIcon": "el-icon-search",
-                  "onCreated": "",
-                  "onMounted": "",
-                  "onInput": "",
-                  "onChange": "",
-                  "onFocus": "",
-                  "onBlur": "",
-                  "onValidate": ""
-                },
-                "id": "input24141"
-              }
-            ],
-            "formConfig": {
-              "modelName": "测试表单",
-              "refName": "vForm",
-              "rulesName": "rules",
-              "labelWidth": 80,
-              "labelPosition": "left",
-              "size": "",
-              "labelAlign": "label-left-align",
-              "cssCode": "",
-              "customClass": "",
-              "functions": "",
-              "layoutType": "PC",
-              "onFormCreated": "",
-              "onFormMounted": "",
-              "onFormDataChange": ""
-            }
-          }
-        },
+      // this.formTemplates = [
+      //   {
+      //     "id": "1232131",
+      //     "userId": "110",
+      //     "createTime": new Date(),
+      //     "modelJson": {
+      //       "widgetList": [
+      //         {
+      //           "type": "textarea",
+      //           "icon": "textarea-field",
+      //           "formItemFlag": true,
+      //           "options": {
+      //             "name": "textarea99113",
+      //             "label": "textarea",
+      //             "labelAlign": "",
+      //             "rows": 3,
+      //             "defaultValue": "",
+      //             "placeholder": "",
+      //             "columnWidth": "200px",
+      //             "size": "",
+      //             "labelWidth": null,
+      //             "labelHidden": false,
+      //             "readonly": false,
+      //             "disabled": false,
+      //             "hidden": false,
+      //             "required": false,
+      //             "validation": "",
+      //             "validationHint": "",
+      //             "customClass": [],
+      //             "labelIconClass": null,
+      //             "labelIconPosition": "rear",
+      //             "labelTooltip": null,
+      //             "minLength": null,
+      //             "maxLength": null,
+      //             "showWordLimit": false,
+      //             "onCreated": "",
+      //             "onMounted": "",
+      //             "onInput": "",
+      //             "onChange": "",
+      //             "onFocus": "",
+      //             "onBlur": "",
+      //             "onValidate": ""
+      //           },
+      //           "id": "textarea99113"
+      //         }
+      //       ],
+      //       "formConfig": {
+      //         "modelName": "formData",
+      //         "refName": "vForm",
+      //         "rulesName": "rules",
+      //         "labelWidth": 80,
+      //         "labelPosition": "left",
+      //         "size": "",
+      //         "labelAlign": "label-left-align",
+      //         "cssCode": "",
+      //         "customClass": "",
+      //         "functions": "",
+      //         "layoutType": "PC",
+      //         "onFormCreated": "",
+      //         "onFormMounted": "",
+      //         "onFormDataChange": ""
+      //       }
+      //     }
+      //   },
+      //   {
+      //     "id": "1232132",
+      //     "userId": "110",
+      //     "createTime": new Date(),
+      //     "modelJson": {
+      //       "widgetList": [
+      //         {
+      //           "type": "input",
+      //           "icon": "text-field",
+      //           "formItemFlag": true,
+      //           "options": {
+      //             "name": "input24141",
+      //             "label": "input",
+      //             "labelAlign": "",
+      //             "type": "text",
+      //             "defaultValue": "",
+      //             "placeholder": "",
+      //             "columnWidth": "200px",
+      //             "size": "",
+      //             "labelWidth": null,
+      //             "labelHidden": false,
+      //             "readonly": false,
+      //             "disabled": false,
+      //             "hidden": false,
+      //             "clearable": true,
+      //             "showPassword": false,
+      //             "required": false,
+      //             "validation": "",
+      //             "validationHint": "",
+      //             "customClass": [],
+      //             "labelIconClass": null,
+      //             "labelIconPosition": "rear",
+      //             "labelTooltip": null,
+      //             "minLength": null,
+      //             "maxLength": null,
+      //             "showWordLimit": false,
+      //             "prefixIcon": "",
+      //             "suffixIcon": "",
+      //             "appendButton": false,
+      //             "appendButtonDisabled": false,
+      //             "buttonIcon": "el-icon-search",
+      //             "onCreated": "",
+      //             "onMounted": "",
+      //             "onInput": "",
+      //             "onChange": "",
+      //             "onFocus": "",
+      //             "onBlur": "",
+      //             "onValidate": ""
+      //           },
+      //           "id": "input24141"
+      //         }
+      //       ],
+      //       "formConfig": {
+      //         "modelName": "测试表单",
+      //         "refName": "vForm",
+      //         "rulesName": "rules",
+      //         "labelWidth": 80,
+      //         "labelPosition": "left",
+      //         "size": "",
+      //         "labelAlign": "label-left-align",
+      //         "cssCode": "",
+      //         "customClass": "",
+      //         "functions": "",
+      //         "layoutType": "PC",
+      //         "onFormCreated": "",
+      //         "onFormMounted": "",
+      //         "onFormDataChange": ""
+      //       }
+      //     }
+      //   },
+      //   {
+      //     "id": "1232133",
+      //     "userId": "110",
+      //     "createTime": new Date(),
+      //     "modelJson": {
+      //       "widgetList": [
+      //         {
+      //           "type": "input",
+      //           "icon": "text-field",
+      //           "formItemFlag": true,
+      //           "options": {
+      //             "name": "input24141",
+      //             "label": "input",
+      //             "labelAlign": "",
+      //             "type": "text",
+      //             "defaultValue": "",
+      //             "placeholder": "",
+      //             "columnWidth": "200px",
+      //             "size": "",
+      //             "labelWidth": null,
+      //             "labelHidden": false,
+      //             "readonly": false,
+      //             "disabled": false,
+      //             "hidden": false,
+      //             "clearable": true,
+      //             "showPassword": false,
+      //             "required": false,
+      //             "validation": "",
+      //             "validationHint": "",
+      //             "customClass": [],
+      //             "labelIconClass": null,
+      //             "labelIconPosition": "rear",
+      //             "labelTooltip": null,
+      //             "minLength": null,
+      //             "maxLength": null,
+      //             "showWordLimit": false,
+      //             "prefixIcon": "",
+      //             "suffixIcon": "",
+      //             "appendButton": false,
+      //             "appendButtonDisabled": false,
+      //             "buttonIcon": "el-icon-search",
+      //             "onCreated": "",
+      //             "onMounted": "",
+      //             "onInput": "",
+      //             "onChange": "",
+      //             "onFocus": "",
+      //             "onBlur": "",
+      //             "onValidate": ""
+      //           },
+      //           "id": "input24141"
+      //         }
+      //       ],
+      //       "formConfig": {
+      //         "modelName": "测试表单",
+      //         "refName": "vForm",
+      //         "rulesName": "rules",
+      //         "labelWidth": 80,
+      //         "labelPosition": "left",
+      //         "size": "",
+      //         "labelAlign": "label-left-align",
+      //         "cssCode": "",
+      //         "customClass": "",
+      //         "functions": "",
+      //         "layoutType": "PC",
+      //         "onFormCreated": "",
+      //         "onFormMounted": "",
+      //         "onFormDataChange": ""
+      //       }
+      //     }
+      //   },
 
 
-      ]
+      // ]
 
       //dev
       // const params = {
@@ -508,13 +552,18 @@ export default {
     //   })
     // }
     // jsonUrl换为formConfig
-    loadFormTemplate(modelJson) {
+    loadFormTemplate(model) {
       this.$confirm(this.i18nt('designer.hint.loadFormTemplateHint'), this.i18nt('render.hint.prompt'), {
         confirmButtonText: this.i18nt('render.hint.confirm'),
         cancelButtonText: this.i18nt('render.hint.cancel')
       }).then(() => {
         let modifiedFlag = false
-        modifiedFlag = this.designer.loadFormJson(modelJson)
+
+        modifiedFlag = this.designer.loadRemoteFormModelInfo(model)
+        //为toolbar-panel添加createTaskButton
+        let designerConfig = this.getDesignerConfig()
+        designerConfig['createTaskButton'] = true
+
         if (modifiedFlag) {
           this.designer.emitHistoryChange()
         }
@@ -622,8 +671,7 @@ div.panel-container {
 }
 
 
-
-.el-card.ft-card:hover{
+.el-card.ft-card:hover {
   border: 1px solid #8896B3;
   margin-left: 20px;
 }

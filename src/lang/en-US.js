@@ -159,6 +159,7 @@ export default {
       exportCode: 'Export Code',
       generateCode: 'Generate Code',
       generateSFC: 'Generate SFC',
+      createTaskButton:'Create Task',
     },
 
     setting: {

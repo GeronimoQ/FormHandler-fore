@@ -8,7 +8,14 @@
 
 import {get, post} from "./methods"
 import {addFormModel, getFormList} from "@/apis/apis";
+//query Model List By userId
+const queryModelListAPI={
+    url:"/platFormmodelTest/queryListByUserId",
+    method:"GET",
+    // params:"userId",
+}
 
+const queryModelList=(userId) =>get(queryModelListAPI,userId);
 
 function sendFormModel(formModel) {
     return post(addFormModel, formModel)
@@ -19,7 +26,11 @@ function queryFormList(userId) {
 }
 
 
+
+
+
 export {
     sendFormModel,
-    queryFormList
+    queryFormList,
+    queryModelList
 }

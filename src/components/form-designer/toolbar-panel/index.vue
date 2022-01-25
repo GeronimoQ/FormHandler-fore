@@ -53,6 +53,10 @@
         <svg-icon icon-class="vue-sfc"/>
         {{ i18nt('designer.toolbar.generateSFC') }}
       </el-button>
+      <el-button v-if="showToolButton('createTaskButton')" type="text" @click="createTask">
+        <svg-icon icon-class="vue-sfc"/>
+        {{ i18nt('designer.toolbar.createTaskButton') }}
+      </el-button>
       <template v-for="(idx, slotName) in $slots">
         <slot :name="slotName"></slot>
       </template>
@@ -185,6 +189,32 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <!--    创建任务抽屉-->
+    <el-dialog
+        title="创建任务"
+        append-to-body
+        :visible.sync="showCreateTaskDialogFlag"
+        v-if="showCreateTaskDialogFlag"
+        show-close
+        destroy-on-close
+        :before-close="closeTaskCreate"
+    >
+      <!--     创建任务模板-->
+
+      <el-form ref="form" :model="taskCreation" label-width="80px">
+        <el-form-item label="标题">
+          <el-input v-model="taskCreation.title" type="text"></el-input>
+        </el-form-item>
+        <el-form-item label="介绍">
+          <el-input v-model="taskCreation.instr"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="taskAdd">确定</el-button>
+          <el-button @click="showCreateTaskDialogFlag=false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -207,6 +237,8 @@ import {saveAs} from 'file-saver'
 
 // api
 import {sendFormModel} from "@/apis/formAPI";
+import {addTask} from "@/apis/taskAPI";
+
 
 export default {
   name: "ToolbarPanel",
@@ -231,6 +263,7 @@ export default {
       showFormDataDialogFlag: false,
       showExportSFCDialogFlag: false,
       showNodeTreeDrawerFlag: false,
+      showCreateTaskDialogFlag: false,
 
       nodeTreeData: [],
 
@@ -267,6 +300,19 @@ export default {
           {label: '333', value: 3},
         ]
       },
+
+      //  任务数据对象
+      taskCreation: {
+        //之后从vuex中拿
+        id:"",
+        userId: 110,
+        createTime: dataFormat(new Date()),
+        title: "",
+        instr: "",
+        disabled: false,
+        modelId:""
+      }
+
 
     }
   },
@@ -310,6 +356,51 @@ export default {
 
       return !!this.designerConfig[configName]
     },
+    //发送任务
+    taskAdd() {
+      this.taskCreation.modelId=this.designer.remoteFormModel.id
+      const response = addTask(this.taskCreation)
+      response.then(res => {
+          this.$message.success("任务创建成功")
+      }).catch(_ => {
+      })
+    },
+
+    //关闭CreateTaskDrawer前
+    closeTaskCreate(done) {
+
+      //  1.去除TaskButton
+      //  2.去除远程模板信息.
+      //  3.提示若要继续创建任务需要重新加载模板
+      this.$confirm("若继续创建任务请重新加载模板").then(_ => {
+        this.designerConfig['createTaskButton'] = false;
+        done();
+      }).catch(_ => {
+
+      })
+    },
+
+    //发送任务数据
+    sendTaskInfo() {
+      const params = {}
+      let response = addTask(params)
+
+      this.$confirm("确认提交?").then(_ => {
+        response.then(res => {
+
+          this.$message({
+            type: "success", message: res.result
+          })
+        }).catch(_ => {
+
+        })
+        //  关闭drawer
+        $refs.drawer.closeDrawer()
+      }).catch(err => {
+        this.$message({type: "error", message: "请重试"})
+      })
+    },
+
 
     buildTreeNodeOfWidget(widget, treeNode) {
       let curNode = {
@@ -562,6 +653,10 @@ export default {
         this.sfcCodeV3 = genSFC(this.designer.formConfig, this.designer.widgetList, beautifier, true)
         this.showExportSFCDialogFlag = true
       })
+    },
+    //任务创建按钮，使得创建抽屉展现
+    createTask() {
+      this.showCreateTaskDialogFlag = true;
     },
 
     copyV2SFC(e) {

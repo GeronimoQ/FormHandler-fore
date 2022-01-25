@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import formList from "@/components/form-list/form-list";
 
 Vue.use(Router)
 
@@ -8,8 +7,11 @@ Vue.use(Router)
 const homePage = () => import("@/layout");
 const formCreator = () => import("@/components/form-designer")
 const welcomePage = () => import("@/views/welcome")
+const user = {login: ()=>import("@/views/user/login.vue"), register: () => import("@/views/user/register.vue")}
+const taskManager = () => import("@/components/Geronimo/task-manager")
 
 const router = new Router({
+    mode: 'history',
     routes: [
         // aboutForm()
         {
@@ -34,16 +36,37 @@ const router = new Router({
                     component: formCreator
                 },
                 {
-                    path: "/form/list",
-                    meta: {
-                        title: "模板列表"
-                    },
-                    component: formList
-                },
+                    path:"/task",
+                    name:"task",
+                    component:taskManager
+                }
             ]
         },
-
-
+        // {
+        //     path: "/user",
+        //     component: user.login,
+        //     children: [
+        //         {
+        //             path: "register",
+        //             name: "register",
+        //             component: user.register
+        //         },
+        //         {
+        //             path: "login",
+        //             name: "login",
+        //         }
+        //     ]
+        // }
+        {
+            path: "/register",
+            name: "register",
+            component: user.register
+        },
+        {
+            path: "/login",
+            name: "login",
+            component: user.login
+        }
     ]
 })
 

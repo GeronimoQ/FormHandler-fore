@@ -159,6 +159,7 @@ export default {
       exportCode: '导出代码',
       generateCode: '生成代码',
       generateSFC: '生成SFC',
+      createTaskButton:'创建任务',
     },
 
     setting: {

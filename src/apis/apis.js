@@ -30,11 +30,11 @@ const addFormModel = {
 //     "userId": ""
 // }
 }
-
 const getFormList={
     url:"/platFormmodelTest/list",
     method: "GET",
 }
+
 
 //表格处理相关API
 

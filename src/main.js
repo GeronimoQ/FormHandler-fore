@@ -14,6 +14,17 @@ import '@/iconfont/iconfont.css'
 
 import {loadExtension} from '@/extension/extension-loader'
 
+//引入jquery
+import $ from "jquery"
+Vue.prototype.$=$
+
+//引入bootstrap
+import BootstrapVue from 'bootstrap-vue'
+Vue.use(BootstrapVue)
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 loadExtension()
 
 Vue.use(ElementUI, { size: 'small' })
