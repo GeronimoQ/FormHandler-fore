@@ -304,13 +304,13 @@ export default {
       //  任务数据对象
       taskCreation: {
         //之后从vuex中拿
-        id:"",
+        id: "",
         userId: 110,
         createTime: dataFormat(new Date()),
         title: "",
         instr: "",
         disabled: false,
-        modelId:""
+        modelId: ""
       }
 
 
@@ -358,10 +358,17 @@ export default {
     },
     //发送任务
     taskAdd() {
-      this.taskCreation.modelId=this.designer.remoteFormModel.id
+      this.taskCreation.modelId = this.designer.remoteFormModel.id
       const response = addTask(this.taskCreation)
       response.then(res => {
-          this.$message.success("任务创建成功")
+        this.$message.success("任务创建成功")
+        this.showCreateTaskDialogFlag = false;
+        this.$confirm("若继续创建任务请重新加载模板").then(_ => {
+          this.designerConfig['createTaskButton'] = false;
+          done();
+        }).catch(_ => {
+
+        })
       }).catch(_ => {
       })
     },

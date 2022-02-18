@@ -10,7 +10,7 @@
                list-type="picture-card" :class="{'hideUploadDiv': uploadBtnHidden}"
                :limit="field.options.limit" :on-exceed="handlePictureExceed"
                :before-upload="beforePictureUpload"
-               :on-success="handlePictureUpload" :on-error="handelUploadError" :on-remove="handlePictureRemove">
+               :on-success="handlePictureUpload" :on-error="handelUploadError" :on-remove="handlePictureRemove" :auto-upload="false">
       <div slot="tip" class="el-upload__tip"
            v-if="!!field.options.uploadTip">{{field.options.uploadTip}}</div>
       <i class="el-icon-plus avatar-uploader-icon"></i>

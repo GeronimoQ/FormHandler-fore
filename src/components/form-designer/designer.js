@@ -116,7 +116,7 @@ export function createDesigner(vueInstance) {
                 modifiedFlag = true
             }
             if (!!formJson && !!formJson.formConfig) {
-                //this.formConfig = importObj.formConfig
+                // this.formConfig = importObj.formConfig
                 overwriteObj(this.formConfig, formJson.formConfig)  /* 用=赋值，会导致inject依赖注入的formConfig属性变成非响应式 */
                 modifiedFlag = true
             }

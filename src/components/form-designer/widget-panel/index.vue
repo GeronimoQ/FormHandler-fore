@@ -561,7 +561,7 @@ export default {
 
         modifiedFlag = this.designer.loadRemoteFormModelInfo(model)
         //为toolbar-panel添加createTaskButton
-        let designerConfig = this.getDesignerConfig()
+        let designerConfig = this.designerConfig
         designerConfig['createTaskButton'] = true
 
         if (modifiedFlag) {

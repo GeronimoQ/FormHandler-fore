@@ -9,7 +9,7 @@ const formCreator = () => import("@/components/form-designer")
 const welcomePage = () => import("@/views/welcome")
 const user = {login: ()=>import("@/views/user/login.vue"), register: () => import("@/views/user/register.vue")}
 const taskManager = () => import("@/components/Geronimo/task-manager")
-
+const formFill=()=>import("@/views/formFill")
 const router = new Router({
     mode: 'history',
     routes: [
@@ -22,23 +22,69 @@ const router = new Router({
             },
             children: [
                 {
+                    path: "/",
+                    component: welcomePage,
+                    meta: {
+                        title: "about forms"
+                    },
+                },
+                {
                     path: "welcome",
                     name: "welcome",
                     meta: {
                         title: "欢迎页"
                     },
                     component: welcomePage
-                }, {
-                    path: "/form/creator",
-                    meta: {
-                        title: "模板组件"
+                },
+
+                {
+                    path:"/form",
+                    name:"form",
+                    meta:{
+                        title:"表单"
                     },
-                    component: formCreator
+                    component:formCreator
                 },
                 {
                     path:"/task",
                     name:"task",
+                    meta:{
+                        title:"任务"
+                    },
                     component:taskManager
+                },
+                // {
+                //     path: "manager",
+                //     meta: {
+                //         title: "管理"
+                //     },
+                //     children:[
+                //         {
+                //             path:"form",
+                //             name:"form",
+                //             meta:{
+                //                 title:"表单"
+                //             },
+                //             component:formCreator
+                //         },
+                //         {
+                //             path:"task",
+                //             name:"task",
+                //             meta:{
+                //                 title: "任务"
+                //             },
+                //             component:taskManager
+                //         }
+                //     ]
+                //
+                // },
+                {
+                    path:"/formFill",
+                    name:"formFill",
+                    meta:{
+                        title: "任务填报"
+                    },
+                    component:formFill
                 }
             ]
         },
@@ -69,5 +115,7 @@ const router = new Router({
         }
     ]
 })
+
+
 
 export default router

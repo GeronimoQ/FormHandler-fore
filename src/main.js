@@ -1,7 +1,6 @@
 import 'babel-polyfill'
 import './utils/debug-console'
 import Vue from 'vue'
-import axios from "axios";
 import App from './App.vue'
 import router from "@/router";
 import ElementUI from 'element-ui'
@@ -13,10 +12,11 @@ import '@/styles/index.scss'
 import '@/iconfont/iconfont.css'
 
 import {loadExtension} from '@/extension/extension-loader'
-
+import {axios} from "@/utils/request.js"
 //引入jquery
 import $ from "jquery"
 Vue.prototype.$=$
+Vue.prototype.$axios=axios
 
 //引入bootstrap
 import BootstrapVue from 'bootstrap-vue'

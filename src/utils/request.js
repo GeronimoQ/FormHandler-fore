@@ -21,6 +21,7 @@ const service = axios.create({
     timeout: 20000,
 })
 
+
 service.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 //环境切换
 // if (process.env.NODE_ENV == 'development') {

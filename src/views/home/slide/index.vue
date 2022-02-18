@@ -6,20 +6,22 @@
     </h3>
 
     <!-- 循环生成侧栏菜单 -->
-    <el-menu router background-color="#3f4d67" text-color="#fff" default-active="/welcome" :unique-opened="true"
-             mode="vertical">
-      <el-menu-item  index="/welcome">
+    <el-menu  background-color="#3f4d67" text-color="#fff" :default-active="this.$route.path" :unique-opened="true"
+             mode="vertical"
+             router
+    >
+      <el-menu-item  index="/">
         <template #title>
           <span>欢迎页</span>
         </template>
       </el-menu-item>
-      <el-submenu >
-        <template #title>
+      <el-submenu index="/" >
+        <template v-slot:title>
           <!--              <i :class="item.icon"></i>-->
           <span>表单管理</span>
         </template>
 
-        <el-menu-item index="/form/creator">
+        <el-menu-item index="/form">
           <template #title>
             <span>表单设计</span>
           </template>
@@ -30,8 +32,13 @@
           </template>
         </el-menu-item>
 
-
       </el-submenu>
+
+      <el-menu-item index="/formFill">
+        <template #title>
+          <span>表单填报</span>
+        </template>
+      </el-menu-item>
       <!--      <template v-for="item in menu">-->
 
       <!--        &lt;!&ndash; 多级菜单外壳 &ndash;&gt;-->
@@ -58,10 +65,7 @@
       <!--      </template>-->
     </el-menu>
 
-    <!-- 侧栏菜单下方图标 -->
-    <!--    <div class="animated bounceInDown imgWrap">-->
-    <!--      <img src="../../static/img/player.gif" height="60px" class="gif rythm pulse3" @click="toggleDance">-->
-    <!--    </div>-->
+
   </div>
 </template>
 

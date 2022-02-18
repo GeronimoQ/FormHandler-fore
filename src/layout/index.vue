@@ -32,7 +32,8 @@ h3 {
 }
 .con-wrap.conCollapse {
   position: relative;
-  padding-left: 64px;
+  padding-left: 10px;
   transition: all 0.3s;
+
 }
 </style>
