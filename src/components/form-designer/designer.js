@@ -134,8 +134,6 @@ export function createDesigner(vueInstance) {
             //  }
             this.remoteFormModel=formModelInfo
             this.loadFormJson(formModelInfo.modelJson)
-
-
         },
 
         setSelected(selected) {

@@ -40,23 +40,39 @@
         <i class="el-icon-view"/>{{ i18nt('designer.toolbar.preview') }}
       </el-button>
 
+      <el-button v-if="showToolButton('exportJsonButton')" type="text" @click="exportModelJson">
+        <svg-icon icon-class="share"/>
+        {{ i18nt('designer.toolbar.exportModelJson') }}
+      </el-button>
+
       <el-button v-if="showToolButton('importJsonButton')" type="text" @click="importJson">
+        <svg-icon icon-class="IMPORT"/>
         {{ i18nt('designer.toolbar.importJson') }}
       </el-button>
+
       <el-button v-if="showToolButton('exportJsonButton')" type="text" @click="exportJson">
+        <svg-icon icon-class="export"/>
         {{ i18nt('designer.toolbar.exportJson') }}
       </el-button>
-      <el-button v-if="showToolButton('exportCodeButton')" type="text" @click="exportCode">
-        {{ i18nt('designer.toolbar.exportCode') }}
-      </el-button>
-      <el-button v-if="showToolButton('generateSFCButton')" type="text" @click="generateSFC">
-        <svg-icon icon-class="vue-sfc"/>
-        {{ i18nt('designer.toolbar.generateSFC') }}
-      </el-button>
+      <!--      <el-button v-if="showToolButton('exportCodeButton')" type="text" @click="exportCode">-->
+      <!--        {{ i18nt('designer.toolbar.exportCode') }}-->
+      <!--      </el-button>-->
+      <!--      <el-button v-if="showToolButton('generateSFCButton')" type="text" @click="generateSFC">-->
+      <!--        <svg-icon icon-class="vue-sfc"/>-->
+      <!--        {{ i18nt('designer.toolbar.generateSFC') }}-->
+      <!--      </el-button>-->
       <el-button v-if="showToolButton('createTaskButton')" type="text" @click="createTask">
-        <svg-icon icon-class="vue-sfc"/>
+        <svg-icon icon-class="rich-editor-field"/>
         {{ i18nt('designer.toolbar.createTaskButton') }}
       </el-button>
+
+      <el-button v-if="showToolButton('deleteModelButton')" style="color: rgb(240,124,130)" type="text"
+                 @click="deleteModel">
+        <svg-icon icon-class="deleteFile"/>
+        {{ i18nt('designer.toolbar.deleteModelButton') }}
+      </el-button>
+
+
       <template v-for="(idx, slotName) in $slots">
         <slot :name="slotName"></slot>
       </template>
@@ -197,23 +213,55 @@
         :visible.sync="showCreateTaskDialogFlag"
         v-if="showCreateTaskDialogFlag"
         show-close
-        destroy-on-close
+        :destroy-on-close="true"
         :before-close="closeTaskCreate"
     >
-      <!--     创建任务模板-->
+
 
       <el-form ref="form" :model="taskCreation" label-width="80px">
+        <!--      任务类型-->
+        <el-form-item label="任务类型">
+          <el-select :value="visiable.TaskTypeTransferVB" v-model="visiable.TaskTypeTransferVB"
+                     @change="TaskTypeSelectChange">
+            <el-option
+                :value="false" label="公共">
+
+            </el-option>
+
+            <el-option :value="true" label="团体">
+
+            </el-option>
+
+          </el-select>
+        </el-form-item>
+
+        <!--团体任务穿梭框-->
+        <el-form-item v-show="visiable.TaskTypeTransferVB" label="填报团体">
+          <el-transfer
+
+              :data="transferGroupData"
+              v-model="newTaskCheckedGroups"
+              :titles="['拥有团体', '下发团体']"
+          >
+          </el-transfer>
+        </el-form-item>
+
+
         <el-form-item label="标题">
           <el-input v-model="taskCreation.title" type="text"></el-input>
         </el-form-item>
         <el-form-item label="介绍">
           <el-input v-model="taskCreation.instr"></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="taskAdd">确定</el-button>
-          <el-button @click="showCreateTaskDialogFlag=false">取消</el-button>
-        </el-form-item>
+
       </el-form>
+      <template v-slot:footer>
+        <div style="width: 100%;height: auto;text-align: center">
+
+          <el-button style="width: 20%;height:40px" type="primary" @click="taskAdd">确定</el-button>
+          <el-button style="width: 20%;height:40px" @click="showCreateTaskDialogFlag=false">取消</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -236,9 +284,11 @@ import loadBeautifier from "@/utils/beautifierLoader";
 import {saveAs} from 'file-saver'
 
 // api
-import {sendFormModel} from "@/apis/formAPI";
-import {addTask} from "@/apis/taskAPI";
-
+import {deleteModel, sendFormModel} from "@/apis/formAPI";
+import {addGroupTask, addTask} from "@/apis/taskAPI";
+import useClipboard from 'vue-clipboard3'
+import {listGroup} from "@/apis/groupAPI";
+import groupInfo from "@/views/groupManage/common/groupInfo";
 
 export default {
   name: "ToolbarPanel",
@@ -264,6 +314,16 @@ export default {
       showExportSFCDialogFlag: false,
       showNodeTreeDrawerFlag: false,
       showCreateTaskDialogFlag: false,
+
+      visiable: {
+        TaskTypeTransferVB: false
+      },
+
+
+      transferGroupData: [],
+      //请求到数据后立即生成上一条数据
+      groupList: null,
+      newTaskCheckedGroups: [],
 
       nodeTreeData: [],
 
@@ -305,7 +365,7 @@ export default {
       taskCreation: {
         //之后从vuex中拿
         id: "",
-        userId: 110,
+        userId: this.$store.state.userInfo.id,
         createTime: dataFormat(new Date()),
         title: "",
         instr: "",
@@ -356,21 +416,79 @@ export default {
 
       return !!this.designerConfig[configName]
     },
-    //发送任务
-    taskAdd() {
-      this.taskCreation.modelId = this.designer.remoteFormModel.id
-      const response = addTask(this.taskCreation)
-      response.then(res => {
-        this.$message.success("任务创建成功")
-        this.showCreateTaskDialogFlag = false;
-        this.$confirm("若继续创建任务请重新加载模板").then(_ => {
-          this.designerConfig['createTaskButton'] = false;
-          done();
-        }).catch(_ => {
+    async TaskTypeSelectChange(value) {
+      if (value) {
+        //为真时候才是团体模式
+        if (this.groupList===null){
+          await this.loadGroupList();
+          await this.generateTransferData();
+        }
+      }
+      // return
+    },
+    /**
+     * 当selectchange到true,加载任务模板API
+     */
+    async loadGroupList() {
+      if (this.groupList===null){
+        let params = {
+          userId: this.$store.state.userInfo.id
+        }
+        await listGroup(params).then(res => {
+          this.groupList = res.result
+        }).catch()
+      }
 
+    },
+    /**
+     * 生成transfer数据
+     * @param groupList
+     */
+    generateTransferData() {
+      for (let index in this.groupList) {
+        let group = this.groupList[index]
+        let one = {
+          key: group.id,
+          label: group.groupName,
+          disable: false
+        }
+        this.transferGroupData.push(one)
+      }
+    },
+    //发送任务
+    async taskAdd() {
+      if (this.visiable.TaskTypeTransferVB) {
+        //团体模式
+        //["123456"]记录的是key
+        // alert(JSON.stringify(checkedGroups))
+        this.taskCreation.modelId = this.designer.remoteFormModel.id
+        this.taskCreation.userId=this.newTaskCheckedGroups
+        await addGroupTask(this.taskCreation).then(res => {
+          this.$message.success("任务创建成功")
+          this.showCreateTaskDialogFlag = false;
+          this.$confirm("若继续创建任务请重新加载模板").then(_ => {
+            this.designerConfig['createTaskButton'] = false;
+            this.designerConfig['deleteModelButton'] = false;
+            done();
+          }).catch()
+        }).catch()
+      } else {
+        this.taskCreation.modelId = this.designer.remoteFormModel.id
+        const response = addTask(this.taskCreation)
+        response.then(res => {
+          this.$message.success("任务创建成功")
+          this.showCreateTaskDialogFlag = false;
+          this.$confirm("若继续创建任务请重新加载模板").then(_ => {
+            this.designerConfig['createTaskButton'] = false;
+            this.designerConfig['deleteModelButton'] = false;
+            done();
+          }).catch(_ => {
+
+          })
+        }).catch(_ => {
         })
-      }).catch(_ => {
-      })
+      }
+
     },
 
     //关闭CreateTaskDrawer前
@@ -381,32 +499,33 @@ export default {
       //  3.提示若要继续创建任务需要重新加载模板
       this.$confirm("若继续创建任务请重新加载模板").then(_ => {
         this.designerConfig['createTaskButton'] = false;
+        this.designerConfig['deleteModelButton'] = false;
         done();
       }).catch(_ => {
 
       })
     },
 
-    //发送任务数据
-    sendTaskInfo() {
-      const params = {}
-      let response = addTask(params)
-
-      this.$confirm("确认提交?").then(_ => {
-        response.then(res => {
-
-          this.$message({
-            type: "success", message: res.result
-          })
-        }).catch(_ => {
-
-        })
-        //  关闭drawer
-        $refs.drawer.closeDrawer()
-      }).catch(err => {
-        this.$message({type: "error", message: "请重试"})
-      })
-    },
+    // //发送任务数据
+    // sendTaskInfo() {
+    //   const params = {}
+    //   let response = addTask(params)
+    //
+    //   this.$confirm("确认提交?").then(_ => {
+    //     response.then(res => {
+    //
+    //       this.$message({
+    //         type: "success", message: res.result
+    //       })
+    //     }).catch(_ => {
+    //
+    //     })
+    //     //  关闭drawer
+    //     $refs.drawer.closeDrawer()
+    //   }).catch(err => {
+    //     this.$message({type: "error", message: "请重试"})
+    //   })
+    // },
 
 
     buildTreeNodeOfWidget(widget, treeNode) {
@@ -577,11 +696,27 @@ export default {
         this.$message.error(ex + '')
       }
     },
+    async exportModelJson() {
+      let widgetList = deepClone(this.designer.widgetList)//表单元素配置
+      let formConfig = deepClone(this.designer.formConfig)//表单配置
+
+      this.jsonContent = JSON.stringify({widgetList, formConfig}, null, '  ')
+      this.jsonRawContent = await JSON.stringify({widgetList, formConfig})
+      try {
+        //复制
+        await useClipboard().toClipboard(this.jsonRawContent)
+        this.$notify({type: "success", title: "模板分析", message: "数据已经复制到粘贴板"})
+        //下面可以设置复制成功的提示框等操作
+        //...
+      } catch (e) {
+        //复制失败
+        this.$notify({type: "error", title: "模板分析", message: "数据复制失败!"})
+      }
+
+    },
 
     //导出JSON，我们将对代码发送到服务器端（sendToServer(api/form/add)）
     exportJson() {
-
-
       let widgetList = deepClone(this.designer.widgetList)//表单元素配置
       let formConfig = deepClone(this.designer.formConfig)//表单配置
 
@@ -595,10 +730,10 @@ export default {
       const formModel = {
         createTime: dataFormat(new Date()),
         formConfig: JSON.stringify(formConfig),
-        formInstr: "test",
+        formInstr: "",
         id: "",
         itemList: JSON.stringify(widgetList),
-        userId: "110"
+        userId: this.$store.state.userInfo.id
       }
       //  测试数据
       // console.log(JSON.stringify(formObj))
@@ -768,7 +903,36 @@ export default {
         }
       }
     },
+    deleteModel() {
 
+      this.$alert('是否删除当前模板!', '模板操作', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: "warning",
+        callback: action => {
+          if (action === 'confirm') {
+            let params = {
+              id: this.designer.remoteFormModel.id
+            }
+            deleteModel(params).then(res => {
+              this.$message.success(res.result)
+              // 退出模板预览 等待重新选择，覆盖旧模板信息
+              this.$alert("请点击模板列表刷新,若继续创建任务请重新加载模板", {
+                confirmButtonText: '确定',
+                type: "success",
+                callback: action => {
+                  this.designerConfig['createTaskButton'] = false;
+                  this.designerConfig['deleteModelButton'] = false;
+                  this.reloadModelList()
+                }
+              })
+            }).catch()
+          }
+
+        }
+      });
+    },
+    inject: ['reloadModelList']
   }
 }
 </script>

@@ -70,7 +70,8 @@
         </el-tab-pane>
 
         <el-tab-pane v-if="showFormTemplates()" name="formLib" style="padding: 8px">
-          <span slot="label"><i class="el-icon-c-scale-to-original"></i> {{ i18nt('designer.formLib') }}</span>
+<!--          表单模板-->
+          <span slot="label" @click="loadFormList"><i class="el-icon-c-scale-to-original"></i> {{ i18nt('designer.formLib') }}</span>
           <!--模板预览-->
           <template v-for="(ft, idx) in formTemplates">
             <el-card :bord-style="{ padding: '0' }" shadow="hover" class="ft-card">
@@ -189,7 +190,7 @@ export default {
     loadFormList: function () {
       //测试获取
       // 测试用户名
-      let params = {userId: 110}
+      let params = {userId: this.$store.state.userInfo.id}
       const response = queryModelList(params);
       response.then(
           //    数据处理并显示
@@ -201,13 +202,11 @@ export default {
                 ) {
               let model = res.result[obj]
               let widgetList = JSON.parse(model.itemList)//表单元素配置
-              let formConfig =JSON.parse(model.formConfig)//表单配置
+              let formConfig = JSON.parse(model.formConfig)//表单配置
 
 
-
-
-              let jsonRawContent={widgetList,formConfig}
-              let o= {
+              let jsonRawContent = {widgetList, formConfig}
+              let o = {
                 id: model.id,
                 userid: model.userId,
                 createTime: new Date(model.createTime),
@@ -563,7 +562,7 @@ export default {
         //为toolbar-panel添加createTaskButton
         let designerConfig = this.designerConfig
         designerConfig['createTaskButton'] = true
-
+        designerConfig['deleteModelButton'] = true
         if (modifiedFlag) {
           this.designer.emitHistoryChange()
         }
@@ -575,8 +574,10 @@ export default {
     }
 
   },
-  created() {
-    this.loadFormList()
+  provide(){
+    return{
+      reloadModelList:this.loadFormList()
+    }
   }
 
 }
@@ -698,6 +699,7 @@ div.panel-container {
   }
 
   .right-button {
+    margin-top: 20px;
     padding: 0;
     float: right;
   }

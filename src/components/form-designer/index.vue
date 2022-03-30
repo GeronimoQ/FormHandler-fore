@@ -33,11 +33,10 @@
 
     <el-container>
       <el-aside class="side-panel">
-        <widget-panel :designer="designer"/>
+        <widget-panel :designer="designer" ref="widgetPanel"/>
       </el-aside>
 
       <el-container class="center-layout-container">
-
         <template >
           <el-header class="toolbar-header">
             <toolbar-panel :designer="designer" ref="toolbarRef">
@@ -112,6 +111,7 @@ export default {
           exportCodeButton: true,  //是否显示导出代码按钮
           generateSFCButton: true,  //是否显示生成SFC按钮
           createTaskButton:false, //是否显示创建任务按钮
+          deleteModelButton:false, //是否显示模板删除按钮
           presetCssCode: '',  //设计器预设CSS样式代码
         }
       }
@@ -333,7 +333,19 @@ export default {
 
     //TODO: 增加更多方法！！
 
+    reloadWidgetPanelModelList(){
+    //  获取方法
+      this.$refs.widgetPanel.loadFormList()
+    },
+
+    provide() {
+      return {
+        reloadModelList:this.reloadWidgetPanelModelList()
+      }
+    }
+
   }
+
 }
 </script>
 

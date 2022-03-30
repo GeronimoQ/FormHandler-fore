@@ -27,9 +27,25 @@ function post(config,req) {
     })
 }
 
-
-function formPost(config,req){
-    axios()
+function put(config,req){
+    return   axios({
+        url:config.url,
+        method: config.method,
+        data:req,
+    })
 }
 
-export {get, post}
+
+function delete_(config,req){
+    return   axios({
+        url:config.url,
+        method: config.method,
+        params:req,
+    })
+}
+//
+// function formPost(config,req){
+//     axios()
+// }
+
+export {get, post,put,delete_}

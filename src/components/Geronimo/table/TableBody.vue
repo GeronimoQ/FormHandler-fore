@@ -18,25 +18,26 @@
 
     <template v-for="(item,index) in tableOptions">
 
-      <el-table-column
-          :key="index"
-          :prop="item.prop"
-          :label="item.label"
-          show-overflow-tooltip
-      >
+        <el-table-column
+            v-if="!item.show?true:item.show"
+            :key="index"
+            :prop="item.prop"
+            :label="item.label"
+            show-overflow-tooltip
+        >
 
-        <!--        <template slot-scope="scope">-->
+          <!--        <template slot-scope="scope">-->
 
-        <!--          <slot-->
-        <!--              v-if="item.slot"-->
-        <!--              :name="scope.column.property"-->
-        <!--              :row="scope.row"-->
-        <!--              :$index="scope.$index"-->
-        <!--          />-->
-        <!--          <span v-else>{{ scope.row[scope.column.property] }}</span>-->
-        <!--        </template>-->
+          <!--          <slot-->
+          <!--              v-if="item.slot"-->
+          <!--              :name="scope.column.property"-->
+          <!--              :row="scope.row"-->
+          <!--              :$index="scope.$index"-->
+          <!--          />-->
+          <!--          <span v-else>{{ scope.row[scope.column.property] }}</span>-->
+          <!--        </template>-->
 
-      </el-table-column>
+        </el-table-column>
 
     </template>
 
@@ -62,15 +63,12 @@
 </template>
 
 <script>
-import TableHeader from "@/components/Geronimo/table/TableHeader";
-import TableCell from "@/components/Geronimo/table/TableCell";
 import {dataFormat} from "@/utils/util";
 
 export default {
   name: "TableBody",
-  components: {TableHeader},
-  props: {
 
+  props: {
     headers: {
       type: Array,
       default: function () {
@@ -128,6 +126,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style >
 
 </style>

@@ -1,26 +1,37 @@
 <template>
- <div id="home">
-   <home-slide ></home-slide>
-   <div class="con-wrap">
-     <home-header class="conCollapse"></home-header>
-       <router-view class="con-wrap conCollapse"></router-view>
-   </div>
- </div>
+  <el-container style="height: 100%">
+    <el-aside style="width: auto">
+      <home-slide ref="homeSlide"></home-slide>
+    </el-aside>
+    <el-container>
+      <el-header>
+        <home-header v-on:collapseMenu="collapseMenu"></home-header>
+      </el-header>
+      <el-main style="padding: 10px">
+        <router-view ></router-view>
+      </el-main>
+    </el-container>
+
+  </el-container>
 </template>
 
 <script>
 import HomeHeader from "@/views/home/header";
 import HomeSlide from "@/views/home/slide";
-import formDesigner from "@/components/form-designer";
 export default {
   name: "layout",
-  components: {HomeSlide, HomeHeader,formDesigner},
+  components: {HomeSlide, HomeHeader},
+  methods:{
+    collapseMenu(isColl){
+      this.$refs.homeSlide.$data.isCollapse=isColl;
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .con-wrap {
-  padding-left: 180px;
+
   transition: all 0.3s;
 h3 {
   margin-top: 0;
@@ -31,9 +42,17 @@ h3 {
 }
 }
 .con-wrap.conCollapse {
-  position: relative;
   padding-left: 10px;
   transition: all 0.3s;
+}
 
+.el-header {
+  background-color: #eef7f2;
+  color: #333;
+  line-height: 60px;
+}
+
+.el-aside {
+  color: #333;
 }
 </style>

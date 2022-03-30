@@ -1,34 +1,34 @@
 <template>
   <div class="my-login-page">
-    <el-row style="position:absolute;top: 40%;width: 100%;height: auto">
-      <el-col :push="10" :span="4">
-        <el-card>
-          <el-form :model="userRegistration">
+        <el-card shadow="none" style="background-color: rgba(0,0,0,0);border: none">
+          <el-form :model="userRegistration" style="border: none">
 
-            <el-form-item label="name">
-              <el-input v-model="userRegistration.name"></el-input>
+            <el-form-item label="学号">
+              <el-input  v-model="userRegistration.userId" class="form-input" ></el-input>
             </el-form-item>
 
 
-            <el-form-item label="password">
-              <el-input type="password" v-model="userRegistration.password"></el-input>
+            <el-form-item label="姓名">
+              <el-input v-model="userRegistration.name" class="form-input"></el-input>
             </el-form-item>
 
+            <el-form-item label="密码">
+              <el-input type="password" v-model="userRegistration.password" class="form-input"></el-input>
+            </el-form-item>
 
-            <el-form-item label="userId">
-              <el-input v-model="userRegistration.userId"></el-input>
+            <el-form-item label="确认密码">
+              <el-input type="password" v-model="userRegistration.password_b" class="form-input" @blur="checkPassword"></el-input>
+              <span v-show="passwordWrong" style="color: #eb507e">{{passwordCheckText}}</span>
             </el-form-item>
 
 
           </el-form>
-
-          <el-button style="width: 100%;margin-top: 20px;word-spacing: 40px" type="primary" @click="beforeRegister"
+          <div style="width: 100%;height: auto;text-align: center">
+          <el-button class="door-but" type="primary" @click.native="beforeRegister"
                      round>注 册
           </el-button>
+          </div>
         </el-card>
-
-      </el-col>
-    </el-row>
   </div>
 </template>
 
@@ -47,40 +47,81 @@ export default {
       userRegistration: {
         name: '',
         password: '',
+        password_b:'',
         userId: ''
-      }
+      },
+      passwordWrong:false,
+      passwordCheckText:''
     }
   },
   methods: {
     //注册按钮回调
     beforeRegister() {
       console.log(JSON.stringify(this.userRegistration))
-      // this.register()
+      if (this.checkData()){
+        this.register()
+      }
+    },
+    checkData(){
+      if (!this.userRegistration.userId.trim()||!this.userRegistration.name.trim()||!this.userRegistration.password.trim()){
+        this.$message.error("注册信息不可为空!")
+        return false;
+      }else{
+        if (this.checkPassword()){
+          return true
+        }
+        return  false
+      }
+    },
+    formatData(data){
+      data=data.trim();
+    },
+    checkPassword(){
+      if (!this.userRegistration.password.trim()||!this.userRegistration.password_b.trim()){
+        this.passwordCheckText='密码不可为空!'
+        this.passwordWrong=true
+        return false
+      }else{
+        if (this.userRegistration.password.trim()!==this.userRegistration.password_b.trim()){
+          this.passwordCheckText='密码不一致!'
+          this.passwordWrong=true
+          return false
+        }
+        this.passwordWrong=false
+        return true
+      }
     },
     //发送注册信息
-    register() {
+    async register() {
       let params={
-        name:this.userRegistration.name,
-        password:this.userRegistration.password,
-        userId:this.userRegistration.userId
+        groupId: "",
+        id: "",
+        joined: false,
+        password: this.userRegistration.password.trim(),
+        userId: this.userRegistration.userId.trim(),
+        userName: this.userRegistration.name.trim()
       }
-      const response = register(JSON.stringify(params));
+      const response =await register(params);
       response.then(
           // 由于berg的API的result code不是封装在result，而是以status code反应。因此直接跳转
           res => {
-            this.$router.push({path: "/login"})
+            this.$message.success("注册成功")
+            setTimeout(_=>{
+              this.$router.push({path: "/login"})
+            },1000)
           }
       ).catch(_ => {
 
       })
-    }
+    },
+
 
   }
 }
 </script>
 
-<style scoped>
-@import "./css/my-login.css";
-@import "~bootstrap/dist/css/bootstrap.min.css";
+<style >
+
+ @import "css/my-login.css";
 
 </style>

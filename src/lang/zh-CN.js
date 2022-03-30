@@ -20,7 +20,8 @@ export default {
     advancedFieldTitle: '高级字段',
     customFieldTitle: '自定义扩展字段',
 
-    noWidgetHint: '请从左侧列表中选择一个组件, 然后用鼠标拖动组件放置于此处.',
+    // noWidgetHint: '请从左侧列表中选择一个组件, 然后用鼠标拖动组件放置于此处.',
+    noWidgetHint: '',
 
     widgetLabel: {
       grid:             '栅格',
@@ -154,12 +155,14 @@ export default {
       nodeTreeTitle: '组件层次结构树',
       clear: '清空',
       preview: '预览',
-      importJson: '导入JSON',
-      exportJson: '导出JSON',
+      importJson: '导入模板',
+      exportJson: '导出模板',
       exportCode: '导出代码',
+      exportModelJson:'分享模板',
       generateCode: '生成代码',
       generateSFC: '生成SFC',
       createTaskButton:'创建任务',
+      deleteModelButton:'删除模板'
     },
 
     setting: {

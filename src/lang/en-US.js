@@ -157,9 +157,11 @@ export default {
       importJson: 'Import JSON',
       exportJson: 'Export JSON',
       exportCode: 'Export Code',
+      exportModelJson:'Share Model',
       generateCode: 'Generate Code',
       generateSFC: 'Generate SFC',
       createTaskButton:'Create Task',
+      deleteModelButton:'Remove Model'
     },
 
     setting: {

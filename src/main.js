@@ -13,6 +13,9 @@ import '@/iconfont/iconfont.css'
 
 import {loadExtension} from '@/extension/extension-loader'
 import {axios} from "@/utils/request.js"
+
+//注册User
+// Vue.prototype.$user=userInfo()
 //引入jquery
 import $ from "jquery"
 Vue.prototype.$=$
@@ -22,8 +25,12 @@ Vue.prototype.$axios=axios
 import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue)
 
+import VueClipboard from 'vue-clipboard3'
+Vue.use(VueClipboard)
+
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import store from '@/store'
 
 loadExtension()
 
@@ -47,6 +54,11 @@ Vue.config.productionTip = false
 
 new Vue({
   el: "#app",
+  store,
+  data(){
+    return{
+    };
+  },
   router,
   comments:{
     App

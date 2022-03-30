@@ -6,8 +6,6 @@
 
 <script>
 import {welcome} from "@/apis/welcome.js"
-import {axios} from "@/utils/request";
-import {hello} from "@/apis/apis.js"
 
 export default {
   name: "welcome",

@@ -6,7 +6,7 @@
  *
  */
 
-import {get, post} from "./methods"
+import {get, post,delete_} from "./methods"
 import {addFormModel, getFormList} from "@/apis/apis";
 
 const base = "/platFormmodelTest"
@@ -22,8 +22,15 @@ const queryByIdAPI = {
     method: "GET"
 }
 
+const deleteModelAPI={
+    url:base+'/delete',
+    method:'DELETE'
+}
+
 const queryModelList = (userId) => get(queryModelListAPI, userId);
 const queryById = id => get(queryByIdAPI, id);
+const deleteModel=id=>delete_(deleteModelAPI,id)
+
 
 function sendFormModel(formModel) {
     return post(addFormModel, formModel)
@@ -38,5 +45,6 @@ export {
     sendFormModel,
     queryFormList,
     queryModelList,
-    queryById
+    queryById,
+    deleteModel
 }
