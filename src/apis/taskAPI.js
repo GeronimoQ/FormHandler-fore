@@ -67,10 +67,11 @@ const QRdownload = taskId => get(downloadQRAPI, taskId)
 const editTask = params => put(editTaskAPI, params)
 const deleteTask = taskId => delete_(deleteTaskAPI, taskId)
 const getGroupTaskList=groupId=>get(getGroupTaskListAPI,groupId)
+const addGroupTask=groupTaskInfo=>post(addGroupTaskAPI,groupTaskInfo)
 
 
 export {
     addTask,
     queryTaskList,
-    queryTaskInfo, QRImageAPI, downloadQRAPI, editTask, deleteTask,getGroupTaskList
+    queryTaskInfo, QRImageAPI, downloadQRAPI, editTask, deleteTask,getGroupTaskList,addGroupTask
 }

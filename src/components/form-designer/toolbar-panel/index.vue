@@ -419,7 +419,7 @@ export default {
     async TaskTypeSelectChange(value) {
       if (value) {
         //为真时候才是团体模式
-        if (this.groupList===null){
+        if (this.groupList === null) {
           await this.loadGroupList();
           await this.generateTransferData();
         }
@@ -430,7 +430,7 @@ export default {
      * 当selectchange到true,加载任务模板API
      */
     async loadGroupList() {
-      if (this.groupList===null){
+      if (this.groupList === null) {
         let params = {
           userId: this.$store.state.userInfo.id
         }
@@ -458,20 +458,31 @@ export default {
     //发送任务
     async taskAdd() {
       if (this.visiable.TaskTypeTransferVB) {
+        alert("a")
         //团体模式
         //["123456"]记录的是key
         // alert(JSON.stringify(checkedGroups))
-        this.taskCreation.modelId = this.designer.remoteFormModel.id
-        this.taskCreation.userId=this.newTaskCheckedGroups
-        await addGroupTask(this.taskCreation).then(res => {
-          this.$message.success("任务创建成功")
-          this.showCreateTaskDialogFlag = false;
-          this.$confirm("若继续创建任务请重新加载模板").then(_ => {
-            this.designerConfig['createTaskButton'] = false;
-            this.designerConfig['deleteModelButton'] = false;
-            done();
-          }).catch()
-        }).catch()
+        try {
+          this.taskCreation.modelId = this.designer.remoteFormModel.id
+
+          this.taskCreation.userId =JSON.parse(JSON.stringify(this.newTaskCheckedGroups));
+          alert(typeof this.newTaskCheckedGroups)
+          await addGroupTask(this.taskCreation).then(res => {
+            this.$message.success("任务创建成功")
+            this.showCreateTaskDialogFlag = false;
+            this.$confirm("若继续创建任务请重新加载模板").then(_ => {
+              this.designerConfig['createTaskButton'] = false;
+              this.designerConfig['deleteModelButton'] = false;
+              done();
+            }).catch()
+          }).catch(_ => {
+
+          })
+        } catch (e) {
+          alert(e)
+        }
+
+
       } else {
         this.taskCreation.modelId = this.designer.remoteFormModel.id
         const response = addTask(this.taskCreation)

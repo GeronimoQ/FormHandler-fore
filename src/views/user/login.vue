@@ -1,6 +1,6 @@
 <template>
   <div class="my-login-page">
-    <el-card shadow="none" style="background-color: rgba(0,0,0,0);border: none">
+    <el-card shadow="none" style="border: none; background-color: unset" >
       <el-form :model="loginInfo" style="border: none">
 
         <el-form-item label="学号">
@@ -85,6 +85,6 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style  lang="scss">
 @import "css/my-login.css";
 </style>
