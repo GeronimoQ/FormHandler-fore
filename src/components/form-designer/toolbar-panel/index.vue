@@ -458,7 +458,6 @@ export default {
     //发送任务
     async taskAdd() {
       if (this.visiable.TaskTypeTransferVB) {
-        alert("a")
         //团体模式
         //["123456"]记录的是key
         // alert(JSON.stringify(checkedGroups))
@@ -466,7 +465,7 @@ export default {
           this.taskCreation.modelId = this.designer.remoteFormModel.id
 
           this.taskCreation.userId =JSON.parse(JSON.stringify(this.newTaskCheckedGroups));
-          alert(typeof this.newTaskCheckedGroups)
+
           await addGroupTask(this.taskCreation).then(res => {
             this.$message.success("任务创建成功")
             this.showCreateTaskDialogFlag = false;
@@ -479,7 +478,7 @@ export default {
 
           })
         } catch (e) {
-          alert(e)
+
         }
 
 
