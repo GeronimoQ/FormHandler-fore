@@ -3,13 +3,6 @@
     <el-container class="con-wrapper">
       <transition name="asideShow" duration="{ enter: 1000, leave: 1000 }">
         <el-aside v-show="visiable.asidePanelShow">
-          <!--        <el-drawer-->
-          <!--                    :visible.sync="visiable.groupListDrawerVB"-->
-          <!--                    :with-header=false-->
-          <!--                    style="position: absolute"-->
-          <!--                    direction="ltr"-->
-          <!--                    z-index="-1"-->
-          <!--        >-->
           <div style="width: 100%;height: 60px;margin-bottom: 20px;padding: 5px 10px 5px 10px">
             <el-button id="add-group-btn" @click="addGroupBtn">添加团体</el-button>
           </div>
@@ -138,8 +131,17 @@
         destroy-on-close
         append-to-body
     >
+
+      <!--      <el-switch active-text="添加个人" inactive-text="群组添加" :value="true">-->
+      <!--        <el-option value="true">单人</el-option>-->
+      <!--        -->
+      <!--        <el-option value="false">多人</el-option>-->
+      <!--      </el-switch>-->
+
       <label>成员学号</label>
+      <!--      确定以/为分隔符号-->
       <el-input v-model="addPartnerUserId"></el-input>
+
       <template v-slot:footer>
         <el-button @click="addPartner">添加成员</el-button>
       </template>
@@ -183,6 +185,7 @@ import TaskManager from "@/components/Geronimo/task-manager";
 import {addGroup, listGroup} from "@/apis/groupAPI";
 import {addGroupForUser, groupOption, listGroupPartner} from "@/apis/userAPI"
 import {queryTaskList} from "@/apis/taskAPI";
+import message from "element-ui/packages/message";
 
 
 export default {
@@ -307,22 +310,70 @@ export default {
      * 向当前团体添加新成员 后端检查成员是否已经加入了团体
      */
     async addPartner() {
-      let params = {
-        groupId: this.curGroupInfo.id,
-        id: "",
-        joined: true,
-        password: "",
-        userId: this.addPartnerUserId,
-        userName: ""
+
+      // 对输入数据格式化为数组一个一个添加，返回失败的数组
+      let userIds = this.addPartnerUserId;
+      let userIdList = userIds.split(",");
+      let failUserAddId=[]
+      if (
+          userIdList.length >= 1
+      ) {
+        for (var idInd=0; idInd <userIdList.length;idInd++) {
+          let id=userIdList[idInd];
+          let params = {
+            groupId: this.curGroupInfo.id,
+            id: "",
+            joined: true,
+            password: "",
+            userId: id,
+            userName: ""
+          }
+          await addGroupForUser(params).then(res => {
+            this.$message.success(res.result);
+            this.addPartnerUserId = '';
+            this.visiable.addPartnerDiaVB = false;
+            this.loadPartnerInfo()
+            close();
+          }).catch(_=>{
+            failUserAddId.push(id)
+          })
+        }else{
+
+        }
+
+
       }
-      await addGroupForUser(params).then(res => {
-        this.$message.success(res.result);
-        this.addPartnerUserId = '';
-        this.visiable.addPartnerDiaVB = false;
-        this.loadPartnerInfo()
-        close();
-      }).catch()
+
+
+      //
+      // let params = {
+      //   groupId: this.curGroupInfo.id,
+      //   id: "",
+      //   joined: true,
+      //   password: "",
+      //   userId: this.addPartnerUserId,
+      //   userName: ""
+      // }
+      // await addGroupForUser(params).then(res => {
+      //   this.$message.success(res.result);
+      //   this.addPartnerUserId = '';
+      //   this.visiable.addPartnerDiaVB = false;
+      //   this.loadPartnerInfo()
+      //   close();
+      // }).catch()
     },
+
+
+    /**
+     *
+     * @param viewId
+     * @returns {Promise<void>}
+     */
+    // async switchAddPartnerChange(viewId){
+    //   switch (viewId){
+    //
+    //   }
+    // },
     /**
      * 选择侧栏视图
      * @param viewId

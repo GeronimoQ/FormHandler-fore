@@ -1,21 +1,20 @@
 // 初始化一个vuex的实例（数据仓库） 导出即可
 import Vuex from 'vuex'
 import Vue from 'vue'
-import userInfo from "@/user";
 
 // 使用安装
 Vue.use(Vuex)
 
 const defaultUserInfo = {
     group: {
-        id: '123abcd',
+        id: '',
         groupName: 'BLUE WORLD',
         groupInstr: 'BLUE WORLD',
-        owner: '123'
+        owner: ''
     },
-    id: "123abcd",
+    id: "",
     joined: false,
-    userId: "1234",
+    userId: "",
     userName: "Geronimo",
 }
 // 初始化

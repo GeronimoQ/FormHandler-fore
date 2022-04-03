@@ -28,7 +28,7 @@
         <svg-icon style="font-size: 19px;vertical-align:middle" icon-class="group"/>
         <span style="margin-left: 5px;vertical-align:middle;font-weight: 500;letter-spacing: 4px">团体管理</span>
       </el-menu-item>
-      <el-submenu index="/group">
+      <el-submenu>
         <template v-slot:title>
           <svg-icon style="font-size: 22px;vertical-align:middle;" icon-class="userManage"/>
           <span style="margin-left: 5px;">表单管理</span>
